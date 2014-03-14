@@ -15,12 +15,12 @@ namespace ReflectionTest
         {
             ReflectProcessor processor = new ReflectProcessor();
 
-            Human[] humanArr = { new Human { Name = "John", Growth = 1150, Weight = 55 },
+            Human[] humanArray = { new Human { Name = "John", Growth = 1150, Weight = 55 },
                                  new Driver{ Name = "Doc", Growth=188, Weight=76 },
                                  new Author{ Name = "Edgar", Growth=178, Weight=1000 }
                                };
 
-            foreach (Human h in humanArr) 
+            foreach (Human h in humanArray) 
             { 
                 processor.Process(h);
             }
