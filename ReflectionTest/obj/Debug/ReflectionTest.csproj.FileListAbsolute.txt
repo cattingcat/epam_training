@@ -1,6 +1,0 @@
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\bin\Debug\ReflectionTest.exe.config
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\bin\Debug\ReflectionTest.exe
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\bin\Debug\ReflectionTest.pdb
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\obj\Debug\ReflectionTest.csprojResolveAssemblyReference.cache
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\obj\Debug\ReflectionTest.exe
-C:\Users\pc-1\Desktop\projects\ReflectionTest\ReflectionTest\obj\Debug\ReflectionTest.pdb
