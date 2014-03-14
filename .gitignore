@@ -1,3 +1,3 @@
-./ReflectionTest/bin
-./ReflectionTest/obj
-./*.suo
+ReflectionTest/bin
+ReflectionTest/obj
+*.suo
