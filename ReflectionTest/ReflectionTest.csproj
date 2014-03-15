@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,10 +47,14 @@
     <Compile Include="Attributes\ContractAttribute.cs" />
     <Compile Include="Attributes\DebugAttribute.cs" />
     <Compile Include="Attributes\InjectAttribute.cs" />
+    <Compile Include="Attributes\Mappers\ColumnAttribute.cs" />
+    <Compile Include="Attributes\Mappers\IdAttribute.cs" />
+    <Compile Include="Attributes\Mappers\TableAttribute.cs" />
     <Compile Include="Attributes\SingletonAttribute.cs" />
     <Compile Include="Classes\Author.cs" />
     <Compile Include="Classes\Driver.cs" />
     <Compile Include="Classes\Human.cs" />
+    <Compile Include="Classes\SomeEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectProcessor.cs" />

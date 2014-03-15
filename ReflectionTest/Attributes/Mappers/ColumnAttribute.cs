@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReflectionTest.Attributes
+namespace ReflectionTest.Attributes.Mappers
 {
     [AttributeUsage(AttributeTargets.Property)]
-    class InjectAttribute: Attribute
+    class ColumnAttribute: Attribute
     {
         public string Name { get; set; }
-        public string Description { get; set; }
-        public Type InterfaceInheritor { get; set; }
     }
 }

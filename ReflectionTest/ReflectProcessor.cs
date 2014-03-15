@@ -6,11 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ReflectionTest.Attributes.Mappers;
 
 namespace ReflectionTest
 {
     public sealed class ReflectProcessor
-
     {
         private IDictionary<string, object> injectDictionary;
         
@@ -30,17 +30,22 @@ namespace ReflectionTest
             injectDictionary[typeof(LinkedList<string>).Name] = l;
         }
         
-        public void Process(object h)
+        public void Process(object o)
         {
-            Type t = h.GetType();
+            Type t = o.GetType();
             bool debugMode = false;
             IEnumerable<Attribute> typeAttrs = t.GetCustomAttributes();
             foreach (var attr in typeAttrs)
             {
                 if (attr is DebugAttribute)
                 {
-                    Console.WriteLine("Before: {0}", h.ToString());
+                    Console.WriteLine("Before: {0}", o.ToString());
                     debugMode = true;
+                }
+
+                if (attr is TableAttribute)
+                {
+                    ProcessEntity(o);
                 }
             }
 
@@ -61,11 +66,12 @@ namespace ReflectionTest
 
                     if (attr is InjectAttribute)
                     {
-                        ProcessInject(attr as InjectAttribute, propInfo, h);
+                        ProcessInject(attr as InjectAttribute, propInfo, o);
                     }
-                    else if (attr is ContractAttribute)
+                    
+                    if (attr is ContractAttribute)
                     {
-                        ProcessContract(attr as ContractAttribute, propInfo, h);
+                        ProcessContract(attr as ContractAttribute, propInfo, o);
                     }
                 }
                 if (debugMode)
@@ -76,7 +82,7 @@ namespace ReflectionTest
 
             if (debugMode)
             {
-                Console.WriteLine("After: {0}\n", h.ToString());
+                Console.WriteLine("After: {0}\n", o.ToString());
             }
         }
 
@@ -152,6 +158,90 @@ namespace ReflectionTest
             }
 
             throw new Exception("Inject Exception");
+        }
+
+        public void ProcessEntity(object o)
+        {
+            string tableName = string.Empty;
+            IList<string> columnList = new List<string>();
+            TableAttribute tableAttr = null;
+            string idColumnName = string.Empty;
+
+            Type type = o.GetType();
+            IEnumerable<Attribute> attributes = type.GetCustomAttributes();
+            foreach (Attribute a in attributes)
+            {
+                if (a is TableAttribute)
+                {
+                    tableAttr = (a as TableAttribute);
+                    tableName = tableAttr.Name;
+                }
+            }
+            if (tableAttr.SelectQuery == string.Empty || tableAttr.InsertQuery == string.Empty || tableAttr.DeleteQuery == string.Empty)
+            {
+                PropertyInfo[] properties = type.GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    IEnumerable<Attribute> propAttributes = property.GetCustomAttributes();
+                    foreach (Attribute a in propAttributes)
+                    {
+                        if (a is ColumnAttribute)
+                        {
+                            string name = (a as ColumnAttribute).Name;
+                            columnList.Add(name);
+                            if (a is IdAttribute)
+                            {
+                                idColumnName = name;
+                            }
+                        }
+                    }
+                }
+
+                StringBuilder colListBuilder = new StringBuilder();
+                foreach (string colName in columnList)
+                {
+                    colListBuilder.Append(colName);
+                    colListBuilder.Append(", ");
+                }
+                colListBuilder.Remove(colListBuilder.Length - 2, 2);
+                string stringColList = colListBuilder.ToString();
+
+                StringBuilder queryBuilder = new StringBuilder();
+                queryBuilder.Append("SELECT ");
+                queryBuilder.Append(stringColList);
+                queryBuilder.Append(" FROM ");
+                queryBuilder.Append(tableName);
+                queryBuilder.Append(";");
+                tableAttr.SelectQuery = queryBuilder.ToString();
+
+                queryBuilder.Clear();
+                queryBuilder.Append("INSERT (");
+                queryBuilder.Append(stringColList);
+                queryBuilder.Append(") INTO ");
+                queryBuilder.Append(tableName);
+                queryBuilder.Append(" VALUES (");
+                for (int i = 0; i < columnList.Count; ++i)
+                {
+                    if (i != columnList.Count - 1)
+                        queryBuilder.Append(String.Format("{0}, ", i));
+                    else
+                        queryBuilder.Append(String.Format("{0}", i));
+                }
+                queryBuilder.Append(");");
+                tableAttr.InsertQuery = queryBuilder.ToString();
+
+                queryBuilder.Clear();
+                queryBuilder.Append("DELETE FROM ");
+                queryBuilder.Append(tableName);
+                queryBuilder.Append(" WHERE (");
+                queryBuilder.Append(idColumnName);
+                queryBuilder.Append(" = 0);");
+                tableAttr.DeleteQuery = queryBuilder.ToString();
+            }
+
+            Console.WriteLine(tableAttr.SelectQuery);
+            Console.WriteLine(tableAttr.InsertQuery);
+            Console.WriteLine(tableAttr.DeleteQuery);
         }
     }
 }

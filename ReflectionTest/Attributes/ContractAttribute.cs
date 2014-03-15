@@ -8,7 +8,7 @@ namespace ReflectionTest.Attributes
 {
     enum ContractType { More, Less, Equa, NotEqual};
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple=true)]
     class ContractAttribute: Attribute
     {
         public object Value { get; set; }
