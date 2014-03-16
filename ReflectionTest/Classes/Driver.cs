@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace ReflectionTest.Classes
 {
+    [Debug]
     class Driver: Human
     {
-        [InjectAttribute(Name="car")]
+        [Inject(Name="car")]
         public string Car { get; set; }
 
         public override string ToString()

@@ -27,7 +27,7 @@ namespace ReflectionTest
             l.AddLast("qwe1");
             l.AddLast("qwe2");
             l.AddLast("qwe3");
-            injectDictionary[typeof(LinkedList<string>).Name] = l;
+            injectDictionary[typeof(LinkedList<string>).Name] = new MyPrivateIEnumerable<string> { List = l };
         }
         
         public void Process(object o)
@@ -119,7 +119,7 @@ namespace ReflectionTest
 
         private void ProcessInject(InjectAttribute attr, PropertyInfo propInfo, object o)
         {
-            if (attr.Name != null && attr.Name != String.Empty)
+            if (!String.IsNullOrEmpty(attr.Name))
             {
                 object injectedVal = null;
                 try
@@ -246,6 +246,28 @@ namespace ReflectionTest
             Console.WriteLine(tableAttr.SelectQuery);
             Console.WriteLine(tableAttr.InsertQuery);
             Console.WriteLine(tableAttr.DeleteQuery);
+        }
+
+        private class MyPrivateIEnumerable<T> : IEnumerable<T>
+        {
+            private LinkedList<T> list;
+
+            public LinkedList<T> List
+            {
+                get { return list; }
+                set { list = value; }
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                Console.WriteLine("From PRIVATE class MyPrivateIEnumerable<T> : IEnumerable<T>");
+                return list.GetEnumerator();
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

@@ -15,19 +15,24 @@ namespace ReflectionTest
         {
             ReflectProcessor processor = new ReflectProcessor();
 
-            Human[] humanArray = { new Human { Name = "John", Growth = 1150, Weight = 55 },
-                                 new Driver { Name = "Doc", Growth=188, Weight=76 },
-                                 new Author { Name = "Edgar", Growth=178, Weight=1000 }
-                               };
+
+            Author author = new Author { Name = "Edgar", Growth = 178, Weight = 1000 };
+            Human[] humanArray = { new Driver { Name = "Doc", Growth=188, Weight=76 }, author };
 
             foreach (Human h in humanArray) 
             { 
                 processor.Process(h);
             }
 
-            processor.Process(new SomeEntity());
+            // private class MyPrivateIEnumerable<T>
+            foreach (string book in author.Books)
+            {
+                Console.WriteLine(book);
+            }
 
             Console.ReadKey();
+
+            
         }
 
     }
