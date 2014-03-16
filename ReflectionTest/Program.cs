@@ -26,7 +26,6 @@ namespace ReflectionTest
             }
 
             processor.Process(new SomeEntity());
-            
 
             Console.ReadKey();
         }

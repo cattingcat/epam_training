@@ -67,9 +67,8 @@ namespace ReflectionTest
                     if (attr is InjectAttribute)
                     {
                         ProcessInject(attr as InjectAttribute, propInfo, o);
-                    }
-                    
-                    if (attr is ContractAttribute)
+                    }                    
+                    else if (attr is ContractAttribute)
                     {
                         ProcessContract(attr as ContractAttribute, propInfo, o);
                     }
@@ -177,7 +176,8 @@ namespace ReflectionTest
                     tableName = tableAttr.Name;
                 }
             }
-            if (tableAttr.SelectQuery == string.Empty || tableAttr.InsertQuery == string.Empty || tableAttr.DeleteQuery == string.Empty)
+            if (String.IsNullOrEmpty(tableAttr.SelectQuery) || String.IsNullOrEmpty(tableAttr.InsertQuery) 
+                || String.IsNullOrEmpty(tableAttr.DeleteQuery))
             {
                 PropertyInfo[] properties = type.GetProperties();
                 foreach (PropertyInfo property in properties)
@@ -197,46 +197,50 @@ namespace ReflectionTest
                     }
                 }
 
-                StringBuilder colListBuilder = new StringBuilder();
+                // make list of columns
+                StringBuilder builder = new StringBuilder();
                 foreach (string colName in columnList)
                 {
-                    colListBuilder.Append(colName);
-                    colListBuilder.Append(", ");
+                    builder.Append(colName);
+                    builder.Append(", ");
                 }
-                colListBuilder.Remove(colListBuilder.Length - 2, 2);
-                string stringColList = colListBuilder.ToString();
+                builder.Remove(builder.Length - 2, 2);
+                string stringColList = builder.ToString();
+                builder.Clear();
 
-                StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.Append("SELECT ");
-                queryBuilder.Append(stringColList);
-                queryBuilder.Append(" FROM ");
-                queryBuilder.Append(tableName);
-                queryBuilder.Append(";");
-                tableAttr.SelectQuery = queryBuilder.ToString();
+                // make select query
+                builder.Append("SELECT ");
+                builder.Append(stringColList);
+                builder.Append(" FROM ");
+                builder.Append(tableName);
+                builder.Append(";");
+                tableAttr.SelectQuery = builder.ToString();
+                builder.Clear();
 
-                queryBuilder.Clear();
-                queryBuilder.Append("INSERT (");
-                queryBuilder.Append(stringColList);
-                queryBuilder.Append(") INTO ");
-                queryBuilder.Append(tableName);
-                queryBuilder.Append(" VALUES (");
+                // make insert query
+                builder.Append("INSERT (");
+                builder.Append(stringColList);
+                builder.Append(") INTO ");
+                builder.Append(tableName);
+                builder.Append(" VALUES (");
                 for (int i = 0; i < columnList.Count; ++i)
                 {
                     if (i != columnList.Count - 1)
-                        queryBuilder.Append(String.Format("{0}, ", i));
+                        builder.Append(String.Format("{0}, ", i));
                     else
-                        queryBuilder.Append(String.Format("{0}", i));
+                        builder.Append(String.Format("{0}", i));
                 }
-                queryBuilder.Append(");");
-                tableAttr.InsertQuery = queryBuilder.ToString();
+                builder.Append(");");
+                tableAttr.InsertQuery = builder.ToString();
+                builder.Clear();
 
-                queryBuilder.Clear();
-                queryBuilder.Append("DELETE FROM ");
-                queryBuilder.Append(tableName);
-                queryBuilder.Append(" WHERE (");
-                queryBuilder.Append(idColumnName);
-                queryBuilder.Append(" = 0);");
-                tableAttr.DeleteQuery = queryBuilder.ToString();
+                // make delete query
+                builder.Append("DELETE FROM ");
+                builder.Append(tableName);
+                builder.Append(" WHERE (");
+                builder.Append(idColumnName);
+                builder.Append(" = 0);");
+                tableAttr.DeleteQuery = builder.ToString();
             }
 
             Console.WriteLine(tableAttr.SelectQuery);
