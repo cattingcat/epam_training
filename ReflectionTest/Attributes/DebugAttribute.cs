@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReflectionTest.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, Inherited=false)]
     class DebugAttribute: Attribute
     {
     }
