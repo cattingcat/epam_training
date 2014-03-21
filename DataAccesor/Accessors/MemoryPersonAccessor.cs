@@ -11,13 +11,11 @@ namespace DataAccessor.Accessors
         {
             return MemoryPersonDB.PersonDB;
         }
-
-        public Entity.Person GetById(int id)
+        public Person GetById(int id)
         {
             var res = from p in MemoryPersonDB.PersonDB where p.ID == id select p;
-            return res.First<Person>();
+            return res.FirstOrDefault<Person>();
         }
-
         public void DeleteById(int id)
         {
             var res = from p in MemoryPersonDB.PersonDB where p.ID == id select p;
@@ -27,7 +25,6 @@ namespace DataAccessor.Accessors
                 MemoryPersonDB.PersonDB.Remove(exPerson);
             }
         }
-
         public void Insert(Person p)
         {
             var tmp = from ep in MemoryPersonDB.PersonDB where ep.ID == p.ID select ep;
@@ -38,7 +35,6 @@ namespace DataAccessor.Accessors
             }
             MemoryPersonDB.PersonDB.Add(p);            
         }
-
         public void Dispose()
         {
             

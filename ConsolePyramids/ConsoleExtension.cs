@@ -18,7 +18,7 @@ namespace ConsolePyramids
                 bool isNum = Int32.TryParse(s, out num);
                 if (!isNum)
                 {
-                    Console.WriteLine("Пожалуйста, введите число.");
+                    //Console.WriteLine("Пожалуйста, введите число.");
                 }
                 else if (num <= 0)
                 {

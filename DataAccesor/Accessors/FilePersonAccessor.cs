@@ -31,7 +31,7 @@ namespace DataAccessor.Accessors
         public Person GetById(int id)
         {
             var res = from p in data where p.ID == id select p;
-            return res.First<Person>();
+            return res.FirstOrDefault<Person>();
         }
         public void DeleteById(int id)
         {
