@@ -11,6 +11,7 @@ namespace DataAccessor
             Console.WriteLine("Commands:\np - print all\np [id] - print one person\ni [id] - insert person with id\nd [id] - delete by id\nx - quit");
             using (IPersonAccessor accessor = new DirectoryPersonAccessor())
             {
+                Console.WriteLine("Now using: {0} ", accessor.GetType().Name);
                 while (true)
                 {
                     string[] command = Console.ReadLine().Split(' ', ',');

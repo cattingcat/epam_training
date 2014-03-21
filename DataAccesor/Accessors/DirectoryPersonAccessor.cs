@@ -32,9 +32,16 @@ namespace DataAccessor.Accessors
         public Person GetById(int id)
         {
             string path = GetFileName(id);
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            if (File.Exists(path))
             {
-                return (Person)serializer.Deserialize(fs);
+                using (FileStream fs = new FileStream(path, FileMode.Open))
+                {
+                    return (Person)serializer.Deserialize(fs);
+                }
+            }
+            else
+            {
+                return null;
             }
         }
         public void DeleteById(int id)

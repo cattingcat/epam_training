@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.IO;
+using System.Collections;
 
 namespace DataAccessor.Accessors
 {
@@ -35,10 +36,20 @@ namespace DataAccessor.Accessors
         public void DeleteById(int id)
         {
             var res = from p in data where p.ID == id select p;
-            data.Remove(res.First<Person>());            
+            if (res.FirstOrDefault<Person>() != null)
+            {
+                Person existPerson = res.First<Person>();
+                data.Remove(existPerson);
+            }
         }
         public void Insert(Person p)
         {
+            var tmp = from ep in data where ep.ID == p.ID select ep;
+            Person existPerson = tmp.FirstOrDefault<Person>();
+            if (existPerson != null)
+            {
+                data.Remove(existPerson);
+            }            
             data.Add(p);            
         }
         public void Dispose()
