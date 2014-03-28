@@ -10,8 +10,8 @@ namespace DataAccessor.Accessors
     interface IAccessor<T>
     {
         ICollection<T> GetAll();
-        T GetById(int id);
-        void DeleteById(int id);
+        T GetById(object id);
+        void DeleteById(object id);
         void Insert(T p);
     }
 }

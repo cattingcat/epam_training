@@ -59,7 +59,14 @@ namespace DataAccessor.ORM
                         string column = reader.GetName(i);
                         PropertyInfo info = map[column];
                         object value = reader.GetValue(i);
-                        info.SetValue(o, value);
+                        if (value != DBNull.Value)
+                        {
+                            info.SetValue(o, value);
+                        }
+                        else
+                        {
+                            info.SetValue(o, null);
+                        }
                     }
                     result.Add(o);
                 }

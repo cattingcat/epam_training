@@ -29,12 +29,12 @@ namespace DataAccessor.Accessors
             return orm.SelectAll<SecondEntity>();
         }
 
-        public SecondEntity GetById(int id)
+        public SecondEntity GetById(object id)
         {
             return orm.SelectById<SecondEntity>(id);
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(object id)
         {
             orm.Delete<SecondEntity>(id);
         }

@@ -69,7 +69,7 @@
     <Compile Include="Entity\SecondEntity.cs" />
     <Compile Include="ORM\Attributes\ColumnAttribute.cs" />
     <Compile Include="ORM\Attributes\IdAttribute.cs" />
-    <Compile Include="ORM\Attributes\OrmMapExtension.cs" />
+    <Compile Include="ORM\OrmMapExtension.cs" />
     <Compile Include="ORM\Attributes\TableAttribute.cs" />
     <Compile Include="ORM\OrmMap.cs" />
     <Compile Include="ORM\MyORM.cs" />

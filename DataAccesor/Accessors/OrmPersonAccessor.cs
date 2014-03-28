@@ -30,12 +30,12 @@ namespace DataAccessor.Accessors
             return orm.SelectAll<Person>();
         }
 
-        public Person GetById(int id)
+        public Person GetById(object id)
         {
             return orm.SelectById<Person>(id);
         }
 
-        public void DeleteById(int id)
+        public void DeleteById(object id)
         {
             orm.Delete<Person>(id);
         }

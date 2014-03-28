@@ -106,7 +106,7 @@ namespace DataAccessor
                     }
                     else if (command.Length == 2)
                     {
-                        int id = Int32.Parse(command[1]);
+                        string id = command[1];
                         SecondEntity p = accessor.GetById(id);
                         Console.WriteLine(p.ToString());
                     }
@@ -126,7 +126,7 @@ namespace DataAccessor
                 {
                     Stopwatch s = new Stopwatch();
                     s.Start();
-                    int id = Int32.Parse(command[1]);
+                    string id = command[1];
                     SecondEntity p = new SecondEntity() { Field = id };
                     if (command.Length >= 3)
                     {

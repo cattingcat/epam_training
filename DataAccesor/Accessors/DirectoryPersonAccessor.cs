@@ -29,9 +29,9 @@ namespace DataAccessor.Accessors
             }
             return res;
         }
-        public Person GetById(int id)
+        public Person GetById(object id)
         {
-            string path = GetFileName(id);
+            string path = GetFileName((int)id);
             if (File.Exists(path))
             {
                 using (FileStream fs = new FileStream(path, FileMode.Open))
@@ -44,9 +44,9 @@ namespace DataAccessor.Accessors
                 return null;
             }
         }
-        public void DeleteById(int id)
+        public void DeleteById(object id)
         {
-            string path = GetFileName(id);
+            string path = GetFileName((int)id);
             File.Delete(path);
         }
         public void Insert(Person p)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessor.ORM.Attributes
+namespace DataAccessor.ORM
 {
     static class OrmMapExtension
     {

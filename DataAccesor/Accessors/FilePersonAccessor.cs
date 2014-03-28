@@ -28,14 +28,14 @@ namespace DataAccessor.Accessors
         {
             return data;
         }
-        public Person GetById(int id)
+        public Person GetById(object id)
         {
-            var res = from p in data where p.ID == id select p;
+            var res = from p in data where p.ID == (int)id select p;
             return res.FirstOrDefault<Person>();
         }
-        public void DeleteById(int id)
+        public void DeleteById(object id)
         {
-            var res = from p in data where p.ID == id select p;
+            var res = from p in data where p.ID == (int)id select p;
             if (res.FirstOrDefault<Person>() != null)
             {
                 Person existPerson = res.First<Person>();

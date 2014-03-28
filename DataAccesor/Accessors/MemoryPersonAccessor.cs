@@ -11,14 +11,14 @@ namespace DataAccessor.Accessors
         {
             return MemoryPersonDB.PersonDB;
         }
-        public Person GetById(int id)
+        public Person GetById(object id)
         {
-            var res = from p in MemoryPersonDB.PersonDB where p.ID == id select p;
+            var res = from p in MemoryPersonDB.PersonDB where p.ID == (int)id select p;
             return res.FirstOrDefault<Person>();
         }
-        public void DeleteById(int id)
+        public void DeleteById(object id)
         {
-            var res = from p in MemoryPersonDB.PersonDB where p.ID == id select p;
+            var res = from p in MemoryPersonDB.PersonDB where p.ID == (int)id select p;
             Person exPerson = res.FirstOrDefault<Person>();
             if (exPerson != null)
             {
