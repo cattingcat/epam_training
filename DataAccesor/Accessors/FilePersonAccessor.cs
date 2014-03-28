@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace DataAccessor.Accessors
 {
-    class FilePersonAccessor: IPersonAccessor
+    class FilePersonAccessor: IAccessor<Person>
     {
         private static XmlSerializer PersonArraySerializer = new XmlSerializer(typeof(List<Person>), new[] { typeof(Person) });
 
@@ -41,6 +41,7 @@ namespace DataAccessor.Accessors
                 Person existPerson = res.First<Person>();
                 data.Remove(existPerson);
             }
+            SerializeCollection(data);
         }
         public void Insert(Person p)
         {
@@ -50,12 +51,9 @@ namespace DataAccessor.Accessors
             {
                 data.Remove(existPerson);
             }            
-            data.Add(p);            
-        }
-        public void Dispose()
-        {
+            data.Add(p);
             SerializeCollection(data);
-        }        
+        }     
 
         private void SerializeCollection(ICollection<Person> collection)
         {

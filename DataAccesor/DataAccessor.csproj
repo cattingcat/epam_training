@@ -11,6 +11,7 @@
     <AssemblyName>DataAccesor</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -58,12 +58,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accessors\OrmPersonAccessor.cs" />
     <Compile Include="Accessors\DirectoryPersonAccessor.cs" />
     <Compile Include="Accessors\FilePersonAccessor.cs" />
-    <Compile Include="Accessors\IPersonAccessor.cs" />
+    <Compile Include="Accessors\IAccessor.cs" />
     <Compile Include="Accessors\MemoryPersonAccessor.cs" />
+    <Compile Include="Accessors\OrmSecondEntityAccessor.cs" />
     <Compile Include="Data\MemoryPersonDB.cs" />
     <Compile Include="Entity\Person.cs" />
+    <Compile Include="Entity\SecondEntity.cs" />
+    <Compile Include="ORM\Attributes\ColumnAttribute.cs" />
+    <Compile Include="ORM\Attributes\IdAttribute.cs" />
+    <Compile Include="ORM\Attributes\OrmMapExtension.cs" />
+    <Compile Include="ORM\Attributes\TableAttribute.cs" />
+    <Compile Include="ORM\OrmMap.cs" />
+    <Compile Include="ORM\MyORM.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\DirectoryAccessorTest.cs" />
@@ -75,6 +84,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\Database.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Database_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>Database.mdf</DependentUpon>
+    </Content>
     <Content Include="Data\FilePersonDB.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

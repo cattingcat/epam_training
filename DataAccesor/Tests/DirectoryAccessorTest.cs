@@ -15,29 +15,23 @@ namespace DataAccessor.Tests
         [Test]
         public void GetNotExistId()
         {
-            using (IPersonAccessor acc = new DirectoryPersonAccessor())
-            {
-                var p = acc.GetById(9999);
-                Assert.AreEqual(null, p);
-            }
+            IAccessor<Person> acc = new DirectoryPersonAccessor();
+            var p = acc.GetById(9999);
+            Assert.AreEqual(null, p);
         }
 
         [Test]
         public void DeleteNotExistId()
         {
-            using (IPersonAccessor acc = new DirectoryPersonAccessor())
-            {
-                acc.DeleteById(9999);
-            }
+            IAccessor<Person> acc = new DirectoryPersonAccessor();
+            acc.DeleteById(9999);
         }
 
         [Test]
         public void InsertExistId()
         {
-            using (IPersonAccessor acc = new DirectoryPersonAccessor())
-            {
-                acc.Insert(new Person { ID = 1 });
-            }
+            IAccessor<Person> acc = new DirectoryPersonAccessor();
+            acc.Insert(new Person { ID = 1 });
         }
     }
 }

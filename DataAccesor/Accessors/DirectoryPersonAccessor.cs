@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace DataAccessor.Accessors
 {
-    class DirectoryPersonAccessor: IPersonAccessor
+    class DirectoryPersonAccessor: IAccessor<Person>
     {
         private static XmlSerializer serializer = new XmlSerializer(typeof(Person));
 

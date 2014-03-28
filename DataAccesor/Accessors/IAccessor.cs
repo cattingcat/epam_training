@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace DataAccessor.Accessors
 {
-    interface IPersonAccessor: IDisposable
+    interface IAccessor<T>
     {
-        ICollection<Person> GetAll();
-        Person GetById(int id);
+        ICollection<T> GetAll();
+        T GetById(int id);
         void DeleteById(int id);
-        void Insert(Person p);
+        void Insert(T p);
     }
 }

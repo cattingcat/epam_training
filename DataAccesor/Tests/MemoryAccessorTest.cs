@@ -15,29 +15,24 @@ namespace DataAccessor.Tests
         [Test]
         public void GetNotExistId()
         {
-            using (MemoryPersonAccessor acc = new MemoryPersonAccessor())
-            {
-                var p = acc.GetById(9999);
-                Assert.AreEqual(null, p);
-            }
+            MemoryPersonAccessor acc = new MemoryPersonAccessor();            
+            var p = acc.GetById(9999);
+            Assert.AreEqual(null, p);
+            
         }
 
         [Test]
         public void DeleteNotExistId()
         {
-            using (MemoryPersonAccessor acc = new MemoryPersonAccessor())
-            {
-                acc.DeleteById(9999);
-            }
+            MemoryPersonAccessor acc = new MemoryPersonAccessor();
+            acc.DeleteById(9999);
         }
 
         [Test]
         public void InsertExistId()
         {
-            using (MemoryPersonAccessor acc = new MemoryPersonAccessor())
-            {
-                acc.Insert(new Person { ID = 1 });
-            }
+            MemoryPersonAccessor acc = new MemoryPersonAccessor();
+            acc.Insert(new Person { ID = 1 });
         }
     }
 }

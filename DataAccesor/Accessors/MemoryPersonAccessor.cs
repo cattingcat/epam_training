@@ -5,7 +5,7 @@ using DataAccessor.Data;
 
 namespace DataAccessor.Accessors
 {
-    class MemoryPersonAccessor: IPersonAccessor
+    class MemoryPersonAccessor: IAccessor<Person>
     {
         public ICollection<Person> GetAll()
         {
@@ -34,10 +34,6 @@ namespace DataAccessor.Accessors
                 MemoryPersonDB.PersonDB.Remove(existPerson);
             }
             MemoryPersonDB.PersonDB.Add(p);            
-        }
-        public void Dispose()
-        {
-            
         }
     }
 }
