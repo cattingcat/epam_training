@@ -73,9 +73,8 @@ namespace DataAccessor.ORM
             }
             return result;
         }
-        public T SelectById<T>(object id) where T: new()
-        {
-            T result = new T();
+        public T SelectById<T>(object id) where T: class, new()
+        {            
             OrmMap map = mappingPool[typeof(T)];            
             string whereStatement = String.Format("{0}=@id", map.ID);
             string selectQuery = map.BuildSelectWhereQuery(whereStatement);        
@@ -96,14 +95,18 @@ namespace DataAccessor.ORM
                 {
                     for (int i = 0; i < reader.FieldCount; ++i)
                     {
+                        T result = new T();
+
                         string column = reader.GetName(i);
                         PropertyInfo info = map[column];
                         object value = reader.GetValue(i);
                         info.SetValue(result, value);
+
+                        return result;
                     }
                 }
             }
-            return result;
+            return default(T);
         }
         public int Insert(object o)
         {
@@ -132,10 +135,17 @@ namespace DataAccessor.ORM
                     DbParameter param = command.CreateParameter();
                     param.DbType = map.GetDbType(pair.Key);
                     param.ParameterName = pair.Value;
-                    param.Value = map[pair.Key].GetValue(o);
+                    param.Value = map[pair.Key].GetValue(o) ?? DBNull.Value;                    
                     command.Parameters.Add(param);
                 }
-                return command.ExecuteNonQuery();                
+                try
+                {
+                    return command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    return 0;
+                }
             }
         }
         public int Delete<T>(object id)
