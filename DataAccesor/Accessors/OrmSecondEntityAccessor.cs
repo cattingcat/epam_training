@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace DataAccessor.Accessors
 {
@@ -15,11 +16,9 @@ namespace DataAccessor.Accessors
 
         public OrmSecondEntityAccessor()
         {
-            string connectionString = 
-                @"Data Source=(LocalDB)\v11.0;AttachDbFilename=" +
-                @"C:\Users\pc-1\Desktop\projects\EpamTraining\DataAccesor\Data\Database.mdf" +
-                @";Integrated Security=False";
-            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.SqlClient");
+            string connectionString = ConfigurationManager.ConnectionStrings["SQLServerCE"].ConnectionString;
+            string providerName = ConfigurationManager.ConnectionStrings["SQLServerCE"].ProviderName;
+            DbProviderFactory factory = DbProviderFactories.GetFactory(providerName);
 
             orm = new MyORM(factory, connectionString, typeof(SecondEntity));
         }

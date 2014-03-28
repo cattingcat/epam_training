@@ -15,7 +15,7 @@ namespace DataAccessor
             int i = int.Parse(Console.ReadLine());
             if (i == 1)
             {
-                IAccessor<Person> accessor = new OrmPersonAccessor();
+                IAccessor<Person> accessor = new ADOPersonAccessor();// OrmPersonAccessor();
                 RunPersonCUI(accessor);
             }
             else

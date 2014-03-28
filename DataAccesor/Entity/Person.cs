@@ -7,6 +7,7 @@ namespace DataAccessor.Entity
     [Table(TableName = "PersonTable")]
     public class Person
     {
+
         [Id(ColumnName = "identificator", ColumnType=System.Data.DbType.Int32)]
         public int ID { get; set; }
         [Column(ColumnName = "NameColumn", ColumnType=System.Data.DbType.String)]
