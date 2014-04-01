@@ -39,11 +39,10 @@ namespace DataAccessor.ORM
             }
         }
 
-        public ICollection<T> SelectAll<T>()
+        public ICollection<T> SelectAll<T>() where T : class, new()
         {
             OrmMap map = mappingPool[typeof(T)];
             string selectQuery = map.BuildSelectAllQuery();
-            List<T> result = new List<T>();
 
             using (DbConnection connection = GetOpenConnection())
             {
@@ -51,27 +50,9 @@ namespace DataAccessor.ORM
                 command.CommandText = map.BuildSelectAllQuery();
 
                 DbDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    T o = Activator.CreateInstance<T>();
-                    for (int i = 0; i < reader.FieldCount; ++i)
-                    {
-                        string column = reader.GetName(i);
-                        PropertyInfo info = map[column];
-                        object value = reader.GetValue(i);
-                        if (value != DBNull.Value)
-                        {
-                            info.SetValue(o, value);
-                        }
-                        else
-                        {
-                            info.SetValue(o, null);
-                        }
-                    }
-                    result.Add(o);
-                }
+                DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
+                return adapter.GetMultipleResult<T>();
             }
-            return result;
         }
         public T SelectById<T>(object id) where T: class, new()
         {            
@@ -91,22 +72,9 @@ namespace DataAccessor.ORM
                 command.Parameters.Add(param);
 
                 DbDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; ++i)
-                    {
-                        T result = new T();
-
-                        string column = reader.GetName(i);
-                        PropertyInfo info = map[column];
-                        object value = reader.GetValue(i);
-                        info.SetValue(result, value);
-
-                        return result;
-                    }
-                }
+                DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
+                return adapter.GetSingleResult<T>();
             }
-            return default(T);
         }
         public int Insert(object o)
         {
@@ -148,7 +116,7 @@ namespace DataAccessor.ORM
                 }
             }
         }
-        public int Delete<T>(object id)
+        public int Delete<T>(object id) where T : class, new()
         {
             OrmMap map = mappingPool[typeof(T)];            
             string whereStatement = String.Format("{0}=@id", map.ID);

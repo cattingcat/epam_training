@@ -48,8 +48,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
-    <Reference Include="nunit.mocks, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -73,17 +71,13 @@
     <Compile Include="Entity\SecondEntity.cs" />
     <Compile Include="ORM\Attributes\ColumnAttribute.cs" />
     <Compile Include="ORM\Attributes\IdAttribute.cs" />
+    <Compile Include="ORM\DbReaderAdapter.cs" />
     <Compile Include="ORM\OrmMapExtension.cs" />
     <Compile Include="ORM\Attributes\TableAttribute.cs" />
     <Compile Include="ORM\OrmMap.cs" />
     <Compile Include="ORM\MyORM.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\DirectoryAccessorTest.cs" />
-    <Compile Include="Tests\FileAccessorTest.cs" />
-    <Compile Include="Tests\MemoryAccessorTest.cs" />
-    <Compile Include="Tests\OrmTest.cs" />
-    <Compile Include="Tests\SimpleTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
