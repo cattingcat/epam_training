@@ -91,5 +91,30 @@ namespace DataAccessor.ORM
             }
             return null;
         }
+
+        public ICollection<object> GetMultipleResult()
+        {
+            List<object> result = new List<object>();
+            while (reader.Read())
+            {
+                object o = Activator.CreateInstance(map.ObjectType);
+                for (int i = 0; i < reader.FieldCount; ++i)
+                {
+                    string column = reader.GetName(i);
+                    PropertyInfo info = map[column];
+                    object value = reader.GetValue(i);
+                    if (value != DBNull.Value)
+                    {
+                        info.SetValue(o, value);
+                    }
+                    else
+                    {
+                        info.SetValue(o, null);
+                    }
+                }
+                result.Add(o);
+            }
+            return result;
+        }
     }
 }

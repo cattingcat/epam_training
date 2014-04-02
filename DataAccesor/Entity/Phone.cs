@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DataAccessor.Entity
 {
     [Table(TableName="PhoneTbl")]
-    class Phone
+    public class Phone
     {
         [Id(ColumnName="id", ColumnType=DbType.Int32)]
         public int Id { get; set; }

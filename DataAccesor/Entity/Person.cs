@@ -1,5 +1,7 @@
 ﻿using DataAccessor.ORM.Attributes;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace DataAccessor.Entity
@@ -17,6 +19,9 @@ namespace DataAccessor.Entity
         public string LastName { get; set; }
         [Column(ColumnName= "dob", ColumnType=DbType.Date)]
         public DateTime DayOfBirth { get; set; }
+
+        [Many(SecondTable = "PhoneTbl", SecondColumn = "person_id")]
+        public ICollection<object> Phones { get; set; }
 
         public override string ToString()
         {

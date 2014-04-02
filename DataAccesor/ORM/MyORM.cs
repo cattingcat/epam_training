@@ -49,9 +49,11 @@ namespace DataAccessor.ORM
                 DbCommand command = connection.CreateCommand();
                 command.CommandText = map.BuildSelectAllQuery();
 
-                DbDataReader reader = command.ExecuteReader();
-                DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
-                return adapter.GetMultipleResult<T>();
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
+                    return adapter.GetMultipleResult<T>();
+                }
             }
         }
         public T SelectById<T>(object id) where T: class, new()
@@ -161,29 +163,21 @@ namespace DataAccessor.ORM
             {
                 PropertyInfo p = containerMap[relation, ColumnType.Relation];
                 RelationAttribute attr = p.GetCustomAttribute<RelationAttribute>();
+
+                string secondTable = attr.SecondTable;
+                string secondColumn = attr.SecondColumn;
+                string thisColumn = attr.ThisColumn;
+                OrmMap innerMap = (from m in mappingPool.Values where m.TableName == secondTable select m).First<OrmMap>();
+                object containerId = containerMap.GetId(containerObj);
+
                 if (attr.Type == RelationType.One)
-                {
-                    string secondTable = attr.SecondTable;
-                    string secondColumn = attr.SecondColumn;
-                    string thisColumn = attr.ThisColumn;
-
-                    OrmMap innerMap = (from m in mappingPool.Values where m.TableName == secondTable select m).First<OrmMap>();
-
-                    object containerId = containerMap.GetId(containerObj);
+                {                 
                     // SELECT person_id FROM PhoneTbl WHERE id = parentId
                     // sub query
-                    StringBuilder builder = new StringBuilder();
-                    builder.Append("(SELECT ");
-                    builder.Append(thisColumn);
-                    builder.Append(" FROM ");
-                    builder.Append(containerMap.TableName);
-                    builder.Append(" WHERE ");
-                    builder.Append(containerMap.ID);
-                    builder.Append(" = @relationVal )");
+                    string subQueryWhereSection = containerMap.ID + " = @relationVal";
+                    string subQuery = containerMap.BuildSubSelectQuery(thisColumn, subQueryWhereSection);
 
-
-                    string whereStatement = String.Format("{0}={1}", secondColumn ?? innerMap.ID, builder.ToString());
-
+                    string whereStatement = String.Format("{0}={1}", secondColumn ?? innerMap.ID, subQuery);
                     string selectQuery = innerMap.BuildSelectWhereQuery(whereStatement);
 
                     DbCommand command = connection.CreateCommand();
@@ -195,16 +189,40 @@ namespace DataAccessor.ORM
                     param.Value = containerId;
                     command.Parameters.Add(param);
 
-                    DbDataReader reader = command.ExecuteReader();
-                    DbReaderAdapter adapter = new DbReaderAdapter(reader, innerMap);
-
-                    object innerObj = adapter.GetSingleResult();
-
+                    object innerObj = null;
+                    using (DbDataReader reader = command.ExecuteReader())
+                    {
+                        DbReaderAdapter adapter = new DbReaderAdapter(reader, innerMap);
+                        innerObj = adapter.GetSingleResult();
+                    }
                     p.SetValue(containerObj, innerObj);
                 }
                 else if (attr.Type == RelationType.Many)
                 {
+                    string whereSection = String.Format("{0} = @relationVal", secondColumn);
+                    string selectQuery = innerMap.BuildSelectWhereQuery(whereSection);
 
+                    DbCommand command = connection.CreateCommand();
+                    command.CommandText = selectQuery;
+
+                    DbParameter param = command.CreateParameter();
+                    param.DbType = containerMap.GetDbType(containerMap.ID);
+                    param.ParameterName = "@relationVal";
+                    param.Value = containerId;
+                    command.Parameters.Add(param);
+
+                    ICollection<object> innerCollection = null;
+                    using (DbDataReader reader = command.ExecuteReader())
+                    {
+                        DbReaderAdapter adapter = new DbReaderAdapter(reader, innerMap);
+                        innerCollection = adapter.GetMultipleResult();
+                    }
+                    foreach (object o in innerCollection)
+                    {
+                        ProcessRelation(innerMap, o, connection);
+                    }
+                    Type propType = p.PropertyType;
+                    p.SetValue(containerObj, (propType)innerCollection);
                 }
             }
         }

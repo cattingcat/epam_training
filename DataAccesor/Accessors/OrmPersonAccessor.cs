@@ -27,12 +27,14 @@ namespace DataAccessor.Accessors
 
         public ICollection<Person> GetAll()
         {
-            Phone p = orm.SelectById<Phone>(1);
+            
             return orm.SelectAll<Person>();
         }
 
         public Person GetById(object id)
         {
+            //Phone p = orm.SelectById<Phone>(1);
+            var v = orm.SelectById<Person>(id);
             return orm.SelectById<Person>(id);
         }
 

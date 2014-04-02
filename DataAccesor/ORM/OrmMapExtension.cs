@@ -42,6 +42,27 @@ namespace DataAccessor.ORM
             string deleteTemplate = "DELETE FROM {0} WHERE " + whereSection;
             return String.Format(deleteTemplate, map.TableName);
         }
+        public static string BuildSubSelectQuery(this OrmMap map, string[] columns, string whereSection)
+        { 
+            StringBuilder builder = new StringBuilder();
+            builder.Append("(SELECT ");
+            foreach (string col in columns)
+            {
+                builder.Append(col);
+                builder.Append(',');
+            }
+            builder.Remove(builder.Length - 1, 1);
+            builder.Append(" FROM ");
+            builder.Append(map.TableName);
+            builder.Append(" WHERE (");
+            builder.Append(whereSection);
+            builder.Append(" ))");
+            return builder.ToString();
+        }
+        public static string BuildSubSelectQuery(this OrmMap map, string column, string whereSection)
+        {
+            return BuildSubSelectQuery(map, new string[] { column }, whereSection);
+        }
 
         public static object GetId(this OrmMap map, object o)
         {
