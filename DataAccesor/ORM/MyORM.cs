@@ -222,7 +222,7 @@ namespace DataAccessor.ORM
                         ProcessRelation(innerMap, o, connection);
                     }
 
-                    // dat epickness code!
+                    // // // // // // // // // // // //
                     Type t = typeof(List<>).MakeGenericType(innerMap.ObjectType);
                     dynamic collection = Activator.CreateInstance(t);
                     foreach (object o in innerCollection)
@@ -231,7 +231,8 @@ namespace DataAccessor.ORM
                         collection.Add(_do);
                     }
                     p.SetValue(containerObj, collection);
-                    
+
+                    // code with exception
                     //p.SetValue(containerObj, Convert.ChangeType(innerCollection, p.PropertyType));
                 }
             }
