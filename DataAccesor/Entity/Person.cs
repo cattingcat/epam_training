@@ -21,7 +21,7 @@ namespace DataAccessor.Entity
         public DateTime DayOfBirth { get; set; }
 
         [Many(SecondTable = "PhoneTbl", SecondColumn = "person_id")]
-        public ICollection<object> Phones { get; set; }
+        public ICollection<Phone> Phones { get; set; }
 
         public override string ToString()
         {

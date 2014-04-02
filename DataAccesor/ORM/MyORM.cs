@@ -221,8 +221,18 @@ namespace DataAccessor.ORM
                     {
                         ProcessRelation(innerMap, o, connection);
                     }
-                    Type propType = p.PropertyType;
-                    p.SetValue(containerObj, (propType)innerCollection);
+
+                    // dat epickness code!
+                    Type t = typeof(List<>).MakeGenericType(innerMap.ObjectType);
+                    dynamic collection = Activator.CreateInstance(t);
+                    foreach (object o in innerCollection)
+                    {
+                        dynamic _do = Convert.ChangeType(o, innerMap.ObjectType);
+                        collection.Add(_do);
+                    }
+                    p.SetValue(containerObj, collection);
+                    
+                    //p.SetValue(containerObj, Convert.ChangeType(innerCollection, p.PropertyType));
                 }
             }
         }
