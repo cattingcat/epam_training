@@ -68,9 +68,13 @@
     <Compile Include="Accessors\OrmSecondEntityAccessor.cs" />
     <Compile Include="Data\MemoryPersonDB.cs" />
     <Compile Include="Entity\Person.cs" />
+    <Compile Include="Entity\Phone.cs" />
     <Compile Include="Entity\SecondEntity.cs" />
     <Compile Include="ORM\Attributes\ColumnAttribute.cs" />
     <Compile Include="ORM\Attributes\IdAttribute.cs" />
+    <Compile Include="ORM\Attributes\ManyAttribute.cs" />
+    <Compile Include="ORM\Attributes\OneAttribute.cs" />
+    <Compile Include="ORM\Attributes\RelationAttribute.cs" />
     <Compile Include="ORM\DbReaderAdapter.cs" />
     <Compile Include="ORM\OrmMapExtension.cs" />
     <Compile Include="ORM\Attributes\TableAttribute.cs" />
@@ -83,9 +87,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\CompactDatabase.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Data\FilePersonDB.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -388,6 +389,13 @@
     </Content>
     <Content Include="Data\FolderDB\file.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ServiceDatabase.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ServiceDatabase_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>ServiceDatabase.mdf</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>

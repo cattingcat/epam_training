@@ -71,9 +71,18 @@ namespace DataAccessor.ORM
                 param.Value = id;
                 command.Parameters.Add(param);
 
-                DbDataReader reader = command.ExecuteReader();
-                DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
-                return adapter.GetSingleResult<T>();
+                T result = null;
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
+                    result = adapter.GetSingleResult<T>();
+                }
+                if (map.Relations.Count != 0)
+                {
+                    ProcessRelation(map, result, connection);
+                }
+
+                return result;
             }
         }
         public int Insert(object o)
@@ -144,6 +153,60 @@ namespace DataAccessor.ORM
             connection.ConnectionString = connectionString;
             connection.Open();
             return connection;
+        }
+
+        private void ProcessRelation(OrmMap containerMap, object containerObj, DbConnection connection)
+        {
+            foreach (string relation in containerMap.Relations)
+            {
+                PropertyInfo p = containerMap[relation, ColumnType.Relation];
+                RelationAttribute attr = p.GetCustomAttribute<RelationAttribute>();
+                if (attr.Type == RelationType.One)
+                {
+                    string secondTable = attr.SecondTable;
+                    string secondColumn = attr.SecondColumn;
+                    string thisColumn = attr.ThisColumn;
+
+                    OrmMap innerMap = (from m in mappingPool.Values where m.TableName == secondTable select m).First<OrmMap>();
+
+                    object containerId = containerMap.GetId(containerObj);
+                    // SELECT person_id FROM PhoneTbl WHERE id = parentId
+                    // sub query
+                    StringBuilder builder = new StringBuilder();
+                    builder.Append("(SELECT ");
+                    builder.Append(thisColumn);
+                    builder.Append(" FROM ");
+                    builder.Append(containerMap.TableName);
+                    builder.Append(" WHERE ");
+                    builder.Append(containerMap.ID);
+                    builder.Append(" = @relationVal )");
+
+
+                    string whereStatement = String.Format("{0}={1}", secondColumn ?? innerMap.ID, builder.ToString());
+
+                    string selectQuery = innerMap.BuildSelectWhereQuery(whereStatement);
+
+                    DbCommand command = connection.CreateCommand();
+                    command.CommandText = selectQuery;
+
+                    DbParameter param = command.CreateParameter();
+                    param.DbType = innerMap.GetDbType(innerMap.ID);
+                    param.ParameterName = "@relationVal";
+                    param.Value = containerId;
+                    command.Parameters.Add(param);
+
+                    DbDataReader reader = command.ExecuteReader();
+                    DbReaderAdapter adapter = new DbReaderAdapter(reader, innerMap);
+
+                    object innerObj = adapter.GetSingleResult();
+
+                    p.SetValue(containerObj, innerObj);
+                }
+                else if (attr.Type == RelationType.Many)
+                {
+
+                }
+            }
         }
     }
 }

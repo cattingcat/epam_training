@@ -18,15 +18,16 @@ namespace DataAccessor.Accessors
 
         public OrmPersonAccessor()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["SQLServerCE"].ConnectionString;
-            string providerName = ConfigurationManager.ConnectionStrings["SQLServerCE"].ProviderName;
+            string connectionString = ConfigurationManager.ConnectionStrings["SQLServerService"].ConnectionString;
+            string providerName = ConfigurationManager.ConnectionStrings["SQLServerService"].ProviderName;
             DbProviderFactory factory = DbProviderFactories.GetFactory(providerName);
 
-            orm = new MyORM(factory, connectionString, typeof(Person));
+            orm = new MyORM(factory, connectionString, typeof(Person), typeof(Phone));
         }
 
         public ICollection<Person> GetAll()
         {
+            Phone p = orm.SelectById<Phone>(1);
             return orm.SelectAll<Person>();
         }
 

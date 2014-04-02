@@ -48,7 +48,7 @@ namespace DataAccessor.ORM
             List<T> result = new List<T>();
             while (reader.Read())
             {
-                T o = Activator.CreateInstance<T>();
+                T o = new T();
                 for (int i = 0; i < reader.FieldCount; ++i)
                 {
                     string column = reader.GetName(i);
@@ -66,6 +66,30 @@ namespace DataAccessor.ORM
                 result.Add(o);
             }
             return result;
+        }
+
+        public object GetSingleResult()
+        {
+            while (reader.Read())
+            {
+                object o = Activator.CreateInstance(map.ObjectType);
+                for (int i = 0; i < reader.FieldCount; ++i)
+                {
+                    string column = reader.GetName(i);
+                    PropertyInfo info = map[column];
+                    object value = reader.GetValue(i);
+                    if (value != DBNull.Value)
+                    {
+                        info.SetValue(o, value);
+                    }
+                    else
+                    {
+                        info.SetValue(o, null);
+                    }
+                }
+                return o;
+            }
+            return null;
         }
     }
 }

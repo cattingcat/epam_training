@@ -8,34 +8,47 @@ using System.Threading.Tasks;
 
 namespace DataAccessor.ORM
 {
+    internal enum ColumnType { Simple, Relation };
+
     internal class OrmMap
     {
-        private IDictionary<string, PropertyInfo> colNameToPropertyMap;
+        private IDictionary<string, PropertyInfo> simpleColumnToProperty;
+        private IDictionary<string, PropertyInfo> relationColumnToProperty;
+        private Type objectType;
 
-        public string TableName { get; set; }
-        public string ID { get; set; }
+        public string TableName { get; private set; }
+        public string ID { get; private set; }
 
         private OrmMap()
         {
-            colNameToPropertyMap = new Dictionary<string, PropertyInfo>();
+            simpleColumnToProperty = new Dictionary<string, PropertyInfo>();
+            relationColumnToProperty = new Dictionary<string, PropertyInfo>();
         }
 
-        public PropertyInfo this[string columnName]
+        public PropertyInfo this[string columnName, ColumnType type = ColumnType.Simple]
         {
             get
             {
-                return colNameToPropertyMap[columnName];
-            }
-            set
-            {
-                colNameToPropertyMap[columnName] = value;
+                if (type == ColumnType.Simple)
+                    return simpleColumnToProperty[columnName];
+                else if (type == ColumnType.Relation)
+                    return relationColumnToProperty[columnName];
+                else
+                    throw new Exception("");
             }
         }
         public ICollection<string> Columns
         {
             get
             {
-                return colNameToPropertyMap.Keys;
+                return simpleColumnToProperty.Keys;
+            }
+        }
+        public ICollection<string> Relations
+        {
+            get
+            {
+                return relationColumnToProperty.Keys;
             }
         }
         public PropertyInfo GetIDPropertyInfo() 
@@ -47,6 +60,13 @@ namespace DataAccessor.ORM
             ColumnAttribute attr = this[columnName].GetCustomAttribute<ColumnAttribute>();
             return attr.ColumnType;
         }
+        public Type ObjectType
+        {
+            get
+            {
+                return objectType;
+            }
+        }
 
         public override string ToString()
         {
@@ -54,7 +74,7 @@ namespace DataAccessor.ORM
             b.Append("Table name: ");
             b.Append(TableName);
             b.Append("\nColumns: \n");
-            foreach (var c in colNameToPropertyMap)
+            foreach (var c in simpleColumnToProperty)
             {
                 b.Append("  ");
                 b.Append(c.Key);
@@ -73,17 +93,33 @@ namespace DataAccessor.ORM
                 throw new Exception("this type have no TableAttribute");
             }
             OrmMap map = new OrmMap();
+            map.objectType = type;
             map.TableName = attr.TableName;
 
             foreach (PropertyInfo p in type.GetProperties())
             {
-                ColumnAttribute ca = (ColumnAttribute)p.GetCustomAttributes(typeof(ColumnAttribute), true).SingleOrDefault();
+                ColumnAttribute ca = p.GetCustomAttribute<ColumnAttribute>();
                 if (ca != null)
                 {
-                    map[ca.ColumnName] = p;
+                    map.simpleColumnToProperty[ca.ColumnName] = p;
                     if (ca is IdAttribute)
                     {
                         map.ID = ca.ColumnName;
+                    }
+                }
+                else
+                {
+                    RelationAttribute ra = p.GetCustomAttribute<RelationAttribute>();
+                    if (ra != null)
+                    {
+                        if (ra.Type == RelationType.One)
+                        {
+                            map.relationColumnToProperty[ra.ThisColumn] = p;
+                        }
+                        else if(ra.Type == RelationType.Many)
+                        {
+                            map.relationColumnToProperty[map.ID] = p;
+                        }
                     }
                 }
             }

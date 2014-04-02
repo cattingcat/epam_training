@@ -12,8 +12,8 @@ namespace DataAccessor.Accessors
         
         public ADOPersonAccessor()
         {
-            connectionString = ConfigurationManager.ConnectionStrings["SQLServerCE"].ConnectionString;
-            string providerName = ConfigurationManager.ConnectionStrings["SQLServerCE"].ProviderName;
+            connectionString = ConfigurationManager.ConnectionStrings["SQLServerService"].ConnectionString;
+            string providerName = ConfigurationManager.ConnectionStrings["SQLServerService"].ProviderName;
             factory = DbProviderFactories.GetFactory(providerName);
         }
         public ICollection<Person> GetAll()
