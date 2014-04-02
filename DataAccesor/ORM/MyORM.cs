@@ -13,6 +13,7 @@ namespace DataAccessor.ORM
         private IDictionary<Type, OrmMap> mappingPool;
         private DbProviderFactory factory;
         private string connectionString;
+        public bool RelationsEnabled { get; set; }
 
         public MyORM(DbProviderFactory factory, string connectionString, params Type[] types)
         {
@@ -23,6 +24,7 @@ namespace DataAccessor.ORM
             {
                 RegisterType(type);
             }
+            RelationsEnabled = true;
         }
 
         public void RegisterType(Type type)
@@ -43,18 +45,26 @@ namespace DataAccessor.ORM
         {
             OrmMap map = mappingPool[typeof(T)];
             string selectQuery = map.BuildSelectAllQuery();
-
+            ICollection<T> result = null;
             using (DbConnection connection = GetOpenConnection())
             {
                 DbCommand command = connection.CreateCommand();
                 command.CommandText = map.BuildSelectAllQuery();
-
+                
                 using (DbDataReader reader = command.ExecuteReader())
                 {
                     DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
-                    return adapter.GetMultipleResult<T>();
+                    result = adapter.GetMultipleResult<T>();
+                }
+                if (RelationsEnabled)
+                {
+                    foreach(T res in result)
+                    {
+                        PerformSelectRelation(map, res, connection);
+                    }                    
                 }
             }
+            return result;
         }
         public T SelectById<T>(object id) where T: class, new()
         {            
@@ -79,11 +89,10 @@ namespace DataAccessor.ORM
                     DbReaderAdapter adapter = new DbReaderAdapter(reader, map);
                     result = adapter.GetSingleResult<T>();
                 }
-                if (map.Relations.Count != 0)
+                if (RelationsEnabled)
                 {
-                    ProcessRelation(map, result, connection);
+                    PerformSelectRelation(map, result, connection);
                 }
-
                 return result;
             }
         }
@@ -157,7 +166,7 @@ namespace DataAccessor.ORM
             return connection;
         }
 
-        private void ProcessRelation(OrmMap containerMap, object containerObj, DbConnection connection)
+        private void PerformSelectRelation(OrmMap containerMap, object containerObj, DbConnection connection)
         {
             foreach (string relation in containerMap.Relations)
             {
@@ -219,7 +228,7 @@ namespace DataAccessor.ORM
                     }
                     foreach (object o in innerCollection)
                     {
-                        ProcessRelation(innerMap, o, connection);
+                        PerformSelectRelation(innerMap, o, connection);
                     }
 
                     // // // // // // // // // // // //

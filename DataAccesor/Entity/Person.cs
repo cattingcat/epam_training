@@ -25,7 +25,8 @@ namespace DataAccessor.Entity
 
         public override string ToString()
         {
-            return String.Format("id: {0}, name: {1}, lastname: {2}, dyaOfBirth: {3}", ID, Name.Trim(), LastName.Trim(), DayOfBirth);
+            return String.Format("id: {0}, name: {1}, lastname: {2}, dyaOfBirth: {3}, Phones: {4}", 
+                ID, Name.Trim(), LastName.Trim(), DayOfBirth, Phones.Count);
         }
     }
 }
